@@ -6,7 +6,7 @@ require('dotenv').config();
 const app=express().use(body_parser.json());
 
 const token=process.env.TOKEN;
-const mytoken=process.env.MYTOKEN;//prasath_token
+const mytoken=process.env.MYTOKEN;
 
 app.listen(process.env.PORT,()=>{
     console.log("webhook is listening");
@@ -59,7 +59,7 @@ app.post("/webhook",(req,res)=>{ //i want some
                        messaging_product:"whatsapp",
                        to:from,
                        text:{
-                           body:"Hi.. I'm Prasath, your message is "+msg_body
+                           body:"Hi.. I'm Sheffin, your message is "+msg_body
                        }
                    },
                    headers:{
