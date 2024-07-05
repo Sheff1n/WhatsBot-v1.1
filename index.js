@@ -33,7 +33,7 @@ const interactiveObject = {
     type: "list",
     header: {
       type: "text",
-      text: "I’m Sheffin, a specialist in website automation and IT solutions.",
+      text: "IT Solutions by Sheffin",
     },
     body: {
       text: "What can I help you with?",
@@ -79,7 +79,7 @@ const languageSelectionObject = {
     type: "list",
     header: {
       type: "text",
-      text: "Please select the language for web development.",
+      text: "Select Development Language",
     },
     body: {
       text: "Choose one of the following languages:",
