@@ -36,38 +36,78 @@ const interactiveObject = {
       text: "I’m Sheffin, a specialist in website automation and IT solutions.",
     },
     body: {
-      text: "What can I help you with",
+      text: "What can I help you with?",
+    },
+    footer: {
+      text: "Please select an option",
     },
     action: {
       button: "List",
       sections: [
         {
-          title: "Section 1 - Fruit",
+          title: "Services",
           rows: [
             {
               id: "1",
-              title: "Apple",
-              description: "Dozen",
+              title: "Web Development",
+              description: "Any Language",
             },
             {
               id: "2",
-              title: "Orange",
-              description: "Dozen",
+              title: "Web Design",
             },
-          ],
-        },
-        {
-          title: "Section 2 - Vegetables",
-          rows: [
             {
               id: "3",
-              title: "Spinach",
-              description: "1kg ",
+              title: "App Development",
+              description: "Any Language",
             },
             {
               id: "4",
-              title: "Broccoli",
-              description: "1kg",
+              title: "Automation",
+              description: "Any Language",
+            },
+          ],
+        },
+      ],
+    },
+  },
+};
+
+const languageSelectionObject = {
+  type: "interactive",
+  interactive: {
+    type: "list",
+    header: {
+      type: "text",
+      text: "Please select the language for web development.",
+    },
+    body: {
+      text: "Choose one of the following languages:",
+    },
+    footer: {
+      text: "Select your preferred language",
+    },
+    action: {
+      button: "Select Language",
+      sections: [
+        {
+          title: "Languages",
+          rows: [
+            {
+              id: "lang_1",
+              title: "JavaScript",
+            },
+            {
+              id: "lang_2",
+              title: "Python",
+            },
+            {
+              id: "lang_3",
+              title: "Java",
+            },
+            {
+              id: "lang_4",
+              title: "PHP",
             },
           ],
         },
@@ -98,6 +138,11 @@ app.post("/webhook", async (req, res) => {
       console.log("From: " + from);
       console.log("Body param: " + msg_body);
 
+      let responseObject = interactiveObject;
+      if (msg_body.toLowerCase().includes("web development")) {
+        responseObject = languageSelectionObject;
+      }
+
       try {
         const response = await axios({
           method: "POST",
@@ -105,7 +150,8 @@ app.post("/webhook", async (req, res) => {
           data: {
             messaging_product: "whatsapp",
             to: from,
-            ...interactiveObject,
+            type: responseObject.type,
+            interactive: responseObject.interactive,
           },
           headers: {
             "Content-Type": "application/json",
