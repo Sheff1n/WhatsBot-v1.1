@@ -130,10 +130,9 @@ app.post("/webhook", async (req, res) => {
       console.log("From: " + from);
       console.log("Body param: " + msg_body);
 
+      let responseObject = interactiveObject;
       if (msg_body.toLowerCase().includes("web developing")) {
         responseObject = languageSelectionObject;
-      } else {
-        responseObject = interactiveObject;
       }
 
       try {
@@ -143,7 +142,7 @@ app.post("/webhook", async (req, res) => {
           data: {
             messaging_product: "whatsapp",
             to: from,
-            ...interactiveObject,
+            ...responseObject,
           },
           headers: {
             "Content-Type": "application/json",
