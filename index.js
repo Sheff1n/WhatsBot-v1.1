@@ -31,56 +31,6 @@ app.get("/webhook",(req,res)=>{
 
 });
 
-const interactiveObject = {
-    type: "list",
-    header: {
-      type: "text",
-      text: "Select the food item you would like.",
-    },
-    body: {
-      text: "You will be presented with a list of options to choose from",
-    },
-    footer: {
-      text: "All of them are freshly packed",
-    },
-    action: {
-      button: "Order",
-      sections: [
-        {
-          title: "Section 1 - Fruit",
-          rows: [
-            {
-              id: "1",
-              title: "Apple",
-              description: "Dozen",
-            },
-            {
-              id: "2",
-              title: "Orange",
-              description: "Dozen",
-            },
-          ],
-        },
-        {
-          title: "Section 2 - Vegetables",
-          rows: [
-            {
-              id: "3",
-              title: "Spinach",
-              description: "1kg ",
-            },
-            {
-              id: "2",
-              title: "Broccoli",
-              description: "1kg",
-            },
-          ],
-        },
-      ],
-    },
-  };
-  
-
 app.post("/webhook",(req,res)=>{ //i want some 
 
     let body_param=req.body;
