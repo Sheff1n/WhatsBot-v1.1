@@ -131,14 +131,19 @@ app.post("/webhook", async (req, res) => {
     ) {
       let phon_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
       let from = body_param.entry[0].changes[0].value.messages[0].from;
-      let msg_body = body_param.entry[0].changes[0].value.messages[0].text ? body_param.entry[0].changes[0].value.messages[0].text.body : "";
+
+      // Check if the message is a list response
+      let message = body_param.entry[0].changes[0].value.messages[0];
+      let msg_body = message.text ? message.text.body : "";
+      let selected_id = message.interactive ? message.interactive.list_reply.id : "";
 
       console.log("Phone number: " + phon_no_id);
       console.log("From: " + from);
       console.log("Body param: " + msg_body);
+      console.log("Selected ID: " + selected_id);
 
       let responseObject = interactiveObject;
-      if (msg_body.toLowerCase().includes("web development")) {
+      if (selected_id === "1") {
         responseObject = languageSelectionObject;
       }
 
