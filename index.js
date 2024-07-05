@@ -58,10 +58,10 @@ const interactiveObject = {
               description: "Any Language",
             },
             {
-              id: "4",
-              title: "Automation",
-              description: "Any Language",
-            },
+                id: "4",
+                title: "Automation",
+                description: "Any Language",
+              },
           ],
         },
       ],
@@ -69,44 +69,6 @@ const interactiveObject = {
   },
 };
 
-const languageSelectionObject = {
-  type: "interactive",
-  interactive: {
-    type: "list",
-    header: {
-      type: "text",
-      text: "Please select the language for web development.",
-    },
-    body: {
-      text: "Choose one of the following languages:",
-    },
-    action: {
-      button: "Select Language",
-      sections: [
-        {
-          rows: [
-            {
-              id: "lang_1",
-              title: "JavaScript",
-            },
-            {
-              id: "lang_2",
-              title: "Python",
-            },
-            {
-              id: "lang_3",
-              title: "Java",
-            },
-            {
-              id: "lang_4",
-              title: "PHP",
-            },
-          ],
-        },
-      ],
-    },
-  },
-};
 
 app.post("/webhook", async (req, res) => {
   let body_param = req.body;
@@ -130,11 +92,6 @@ app.post("/webhook", async (req, res) => {
       console.log("From: " + from);
       console.log("Body param: " + msg_body);
 
-      let responseObject = interactiveObject;
-      if (msg_body.toLowerCase().includes("web developing")) {
-        responseObject = languageSelectionObject;
-      }
-
       try {
         const response = await axios({
           method: "POST",
@@ -142,7 +99,7 @@ app.post("/webhook", async (req, res) => {
           data: {
             messaging_product: "whatsapp",
             to: from,
-            ...responseObject,
+            ...interactiveObject,
           },
           headers: {
             "Content-Type": "application/json",
