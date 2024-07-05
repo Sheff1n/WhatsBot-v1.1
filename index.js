@@ -42,33 +42,39 @@ const interactiveObject = {
       button: "List",
       sections: [
         {
+          title: "Section 1 - Fruit",
           rows: [
             {
               id: "1",
-              title: "Web developing",
-              description: "Any Language",
+              title: "Apple",
+              description: "Dozen",
             },
             {
               id: "2",
-              title: "Web Designs",
+              title: "Orange",
+              description: "Dozen",
             },
+          ],
+        },
+        {
+          title: "Section 2 - Vegetables",
+          rows: [
             {
               id: "3",
-              title: "App developing",
-              description: "Any Language",
+              title: "Spinach",
+              description: "1kg ",
             },
             {
-                id: "4",
-                title: "Automation",
-                description: "Any Language",
-              },
+              id: "4",
+              title: "Broccoli",
+              description: "1kg",
+            },
           ],
         },
       ],
     },
   },
 };
-
 
 app.post("/webhook", async (req, res) => {
   let body_param = req.body;
@@ -109,10 +115,7 @@ app.post("/webhook", async (req, res) => {
         console.log("Message sent successfully:", response.data);
         res.sendStatus(200);
       } catch (error) {
-        console.error(
-          "Error sending message:",
-          error.response ? error.response.data : error.message
-        );
+        console.error("Error sending message:", error.response ? error.response.data : error.message);
         res.sendStatus(500);
       }
     } else {
