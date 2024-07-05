@@ -12,17 +12,17 @@ app.listen(process.env.PORT, () => {
   console.log("webhook is listening");
 });
 
-//to verify the callback url from dashboard side - cloud api side
+// To verify the callback URL from the dashboard side - cloud API side
 app.get("/webhook", (req, res) => {
   let mode = req.query["hub.mode"];
-  let challange = req.query["hub.challenge"];
+  let challenge = req.query["hub.challenge"];
   let token = req.query["hub.verify_token"];
 
   if (mode && token) {
     if (mode === "subscribe" && token === mytoken) {
-      res.status(200).send(challange);
+      res.status(200).send(challenge);
     } else {
-      res.status(403);
+      res.sendStatus(403);
     }
   }
 });
@@ -66,7 +66,7 @@ const interactiveObject = {
             description: "1kg ",
           },
           {
-            id: "2",
+            id: "4",
             title: "Broccoli",
             description: "1kg",
           },
@@ -77,8 +77,6 @@ const interactiveObject = {
 };
 
 app.post("/webhook", (req, res) => {
-  //i want some
-
   let body_param = req.body;
 
   console.log(JSON.stringify(body_param, null, 2));
@@ -98,7 +96,7 @@ app.post("/webhook", (req, res) => {
 
       console.log("phone number " + phon_no_id);
       console.log("from " + from);
-      console.log("boady param " + msg_body);
+      console.log("body param " + msg_body);
 
       axios({
         method: "POST",
@@ -110,12 +108,19 @@ app.post("/webhook", (req, res) => {
         data: {
           messaging_product: "whatsapp",
           to: from,
-          ...interactiveObject,
+          type: "interactive",
+          interactive: interactiveObject,
         },
         headers: {
           "Content-Type": "application/json",
         },
-      });
+      })
+        .then(response => {
+          console.log('Message sent successfully:', response.data);
+        })
+        .catch(error => {
+          console.error('Error sending message:', error.response ? error.response.data : error.message);
+        });
 
       res.sendStatus(200);
     } else {
