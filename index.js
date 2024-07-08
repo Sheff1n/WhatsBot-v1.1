@@ -117,7 +117,7 @@ const languageSelectionObject = {
   },
 };
 
-let selectedService = null;
+let userSelections = {};
 
 app.post("/webhook", async (req, res) => {
   let body_param = req.body;
@@ -145,8 +145,12 @@ app.post("/webhook", async (req, res) => {
       console.log("Body param: " + msg_body);
       console.log("Selected ID: " + selected_id);
 
+      if (!userSelections[from]) {
+        userSelections[from] = {};
+      }
+
       if (selected_id === "1") {
-        selectedService = "Web Development";
+        userSelections[from].service = "Web Development";
         try {
           const response = await axios({
             method: "POST",
@@ -177,6 +181,8 @@ app.post("/webhook", async (req, res) => {
         };
         let selectedLanguage = languages[selected_id];
 
+        userSelections[from].language = selectedLanguage;
+
         try {
           const response = await axios({
             method: "POST",
@@ -186,8 +192,34 @@ app.post("/webhook", async (req, res) => {
               to: adminPhoneNumber,
               type: "text",
               text: {
-                body: `${selectedService}: ${selectedLanguage}`,
+                body: `${userSelections[from].service}: ${selectedLanguage}`,
               },
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          console.log("Message sent successfully:", response.data);
+          res.sendStatus(200);
+        } catch (error) {
+          console.error("Error sending message:", error.response ? error.response.data : error.message);
+          res.sendStatus(500);
+        }
+
+        // Clear the user selection after sending the message
+        delete userSelections[from];
+      } else {
+        // Handle other cases, e.g., initial interaction
+        try {
+          const response = await axios({
+            method: "POST",
+            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+            data: {
+              messaging_product: "whatsapp",
+              to: from,
+              type: interactiveObject.type,
+              interactive: interactiveObject.interactive,
             },
             headers: {
               "Content-Type": "application/json",
