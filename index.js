@@ -7,6 +7,7 @@ const app = express().use(body_parser.json());
 
 const token = process.env.TOKEN;
 const mytoken = process.env.MYTOKEN;
+const adminPhoneNumber = "9895260915"; // The phone number to send the final message to
 
 app.listen(process.env.PORT, () => {
   console.log("Webhook is listening");
@@ -116,6 +117,8 @@ const languageSelectionObject = {
   },
 };
 
+let selectedService = null;
+
 app.post("/webhook", async (req, res) => {
   let body_param = req.body;
 
@@ -142,31 +145,61 @@ app.post("/webhook", async (req, res) => {
       console.log("Body param: " + msg_body);
       console.log("Selected ID: " + selected_id);
 
-      let responseObject = interactiveObject;
       if (selected_id === "1") {
-        responseObject = languageSelectionObject;
-      }
+        selectedService = "Web Development";
+        try {
+          const response = await axios({
+            method: "POST",
+            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+            data: {
+              messaging_product: "whatsapp",
+              to: from,
+              type: languageSelectionObject.type,
+              interactive: languageSelectionObject.interactive,
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
 
-      try {
-        const response = await axios({
-          method: "POST",
-          url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-          data: {
-            messaging_product: "whatsapp",
-            to: from,
-            type: responseObject.type,
-            interactive: responseObject.interactive,
-          },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+          console.log("Message sent successfully:", response.data);
+          res.sendStatus(200);
+        } catch (error) {
+          console.error("Error sending message:", error.response ? error.response.data : error.message);
+          res.sendStatus(500);
+        }
+      } else if (selected_id.startsWith("lang_")) {
+        const languages = {
+          "lang_1": "JavaScript",
+          "lang_2": "Python",
+          "lang_3": "Java",
+          "lang_4": "PHP",
+        };
+        let selectedLanguage = languages[selected_id];
 
-        console.log("Message sent successfully:", response.data);
-        res.sendStatus(200);
-      } catch (error) {
-        console.error("Error sending message:", error.response ? error.response.data : error.message);
-        res.sendStatus(500);
+        try {
+          const response = await axios({
+            method: "POST",
+            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+            data: {
+              messaging_product: "whatsapp",
+              to: adminPhoneNumber,
+              type: "text",
+              text: {
+                body: `${selectedService}: ${selectedLanguage}`,
+              },
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          console.log("Message sent successfully:", response.data);
+          res.sendStatus(200);
+        } catch (error) {
+          console.error("Error sending message:", error.response ? error.response.data : error.message);
+          res.sendStatus(500);
+        }
       }
     } else {
       res.sendStatus(404);
