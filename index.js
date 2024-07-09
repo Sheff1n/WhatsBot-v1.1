@@ -28,10 +28,10 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-const interactiveObject = {
+const serviceSelectionObject = {
   type: "interactive",
   interactive: {
-    type: "list",
+    type: "button",
     header: {
       type: "text",
       text: "IT Solutions by Sheffin",
@@ -43,31 +43,27 @@ const interactiveObject = {
       text: "Please select an option",
     },
     action: {
-      button: "List",
-      sections: [
+      buttons: [
         {
-          title: "Services",
-          rows: [
-            {
-              id: "1",
-              title: "Web Development",
-              description: "Any Language",
-            },
-            {
-              id: "2",
-              title: "Web Design",
-            },
-            {
-              id: "3",
-              title: "App Development",
-              description: "Any Language",
-            },
-            {
-              id: "4",
-              title: "Automation",
-              description: "Any Language",
-            },
-          ],
+          type: "reply",
+          reply: {
+            id: "service_web_development",
+            title: "Web Development",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "service_app_development",
+            title: "App Development",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "service_automation",
+            title: "Automation",
+          },
         },
       ],
     },
@@ -77,7 +73,7 @@ const interactiveObject = {
 const languageSelectionObject = {
   type: "interactive",
   interactive: {
-    type: "list",
+    type: "button",
     header: {
       type: "text",
       text: "Select Development Language",
@@ -89,28 +85,76 @@ const languageSelectionObject = {
       text: "Select your preferred language",
     },
     action: {
-      button: "Select Language",
-      sections: [
+      buttons: [
         {
-          title: "Languages",
-          rows: [
-            {
-              id: "lang_1",
-              title: "JavaScript",
-            },
-            {
-              id: "lang_2",
-              title: "Python",
-            },
-            {
-              id: "lang_3",
-              title: "Java",
-            },
-            {
-              id: "lang_4",
-              title: "PHP",
-            },
-          ],
+          type: "reply",
+          reply: {
+            id: "lang_javascript",
+            title: "JavaScript",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "lang_python",
+            title: "Python",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "lang_java",
+            title: "Java",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "lang_php",
+            title: "PHP",
+          },
+        },
+      ],
+    },
+  },
+};
+
+const budgetSelectionObject = {
+  type: "interactive",
+  interactive: {
+    type: "button",
+    header: {
+      type: "text",
+      text: "Select Your Budget",
+    },
+    body: {
+      text: "Choose one of the following budget ranges:",
+    },
+    footer: {
+      text: "Select your budget",
+    },
+    action: {
+      buttons: [
+        {
+          type: "reply",
+          reply: {
+            id: "budget_below_10000",
+            title: "Below 10000",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "budget_10000_50000",
+            title: "Between 10000 and 50000",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "budget_above_50000",
+            title: "Above 50000",
+          },
         },
       ],
     },
@@ -135,22 +179,26 @@ app.post("/webhook", async (req, res) => {
       let phon_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
       let from = body_param.entry[0].changes[0].value.messages[0].from;
 
-      // Check if the message is a list response
+      // Check if the message is a button response
       let message = body_param.entry[0].changes[0].value.messages[0];
-      let msg_body = message.text ? message.text.body : "";
-      let selected_id = message.interactive ? message.interactive.list_reply.id : "";
+      let selected_id = message.interactive ? message.interactive.button_reply.id : "";
 
       console.log("Phone number: " + phon_no_id);
       console.log("From: " + from);
-      console.log("Body param: " + msg_body);
       console.log("Selected ID: " + selected_id);
 
       if (!userSelections[from]) {
         userSelections[from] = {};
       }
 
-      if (selected_id === "1") {
-        userSelections[from].service = "Web Development";
+      if (selected_id.startsWith("service_")) {
+        let services = {
+          "service_web_development": "Web Development",
+          "service_app_development": "App Development",
+          "service_automation": "Automation",
+        };
+        userSelections[from].service = services[selected_id];
+
         try {
           const response = await axios({
             method: "POST",
@@ -174,14 +222,41 @@ app.post("/webhook", async (req, res) => {
         }
       } else if (selected_id.startsWith("lang_")) {
         const languages = {
-          "lang_1": "JavaScript",
-          "lang_2": "Python",
-          "lang_3": "Java",
-          "lang_4": "PHP",
+          "lang_javascript": "JavaScript",
+          "lang_python": "Python",
+          "lang_java": "Java",
+          "lang_php": "PHP",
         };
-        let selectedLanguage = languages[selected_id];
+        userSelections[from].language = languages[selected_id];
 
-        userSelections[from].language = selectedLanguage;
+        try {
+          const response = await axios({
+            method: "POST",
+            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+            data: {
+              messaging_product: "whatsapp",
+              to: from,
+              type: budgetSelectionObject.type,
+              interactive: budgetSelectionObject.interactive,
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          console.log("Message sent successfully:", response.data);
+          res.sendStatus(200);
+        } catch (error) {
+          console.error("Error sending message:", error.response ? error.response.data : error.message);
+          res.sendStatus(500);
+        }
+      } else if (selected_id.startsWith("budget_")) {
+        const budgets = {
+          "budget_below_10000": "Below 10000",
+          "budget_10000_50000": "Between 10000 and 50000",
+          "budget_above_50000": "Above 50000",
+        };
+        userSelections[from].budget = budgets[selected_id];
 
         try {
           const response = await axios({
@@ -192,7 +267,7 @@ app.post("/webhook", async (req, res) => {
               to: adminPhoneNumber,
               type: "text",
               text: {
-                body: `${userSelections[from].service}: ${selectedLanguage}`,
+                body: `Service: ${userSelections[from].service}\nLanguage: ${userSelections[from].language}\nBudget: ${userSelections[from].budget}`,
               },
             },
             headers: {
@@ -218,8 +293,8 @@ app.post("/webhook", async (req, res) => {
             data: {
               messaging_product: "whatsapp",
               to: from,
-              type: interactiveObject.type,
-              interactive: interactiveObject.interactive,
+              type: serviceSelectionObject.type,
+              interactive: serviceSelectionObject.interactive,
             },
             headers: {
               "Content-Type": "application/json",
