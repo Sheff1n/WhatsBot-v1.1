@@ -32,36 +32,29 @@ const serviceSelectionObject = {
   type: "interactive",
   interactive: {
     type: "button",
-    header: {
-      type: "text",
-      text: "IT Solutions by Sheffin",
-    },
     body: {
       text: "What can I help you with?",
-    },
-    footer: {
-      text: "Select an option",
     },
     action: {
       buttons: [
         {
           type: "reply",
           reply: {
-            id: "service_web_dev",
-            title: "Web Dev",
+            id: "web_development",
+            title: "Web Development",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "service_app_dev",
-            title: "App Dev",
+            id: "app_development",
+            title: "App Development",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "service_auto",
+            id: "automation",
             title: "Automation",
           },
         },
@@ -74,30 +67,30 @@ const languageSelectionObject = {
   type: "interactive",
   interactive: {
     type: "button",
-    header: {
-      type: "text",
-      text: "Select Language",
-    },
     body: {
-      text: "Choose a language:",
-    },
-    footer: {
-      text: "Select your preferred language",
+      text: "Choose one of the following languages:",
     },
     action: {
       buttons: [
         {
           type: "reply",
           reply: {
-            id: "lang_js",
+            id: "lang_javascript",
             title: "JavaScript",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "lang_py",
+            id: "lang_python",
             title: "Python",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "lang_java",
+            title: "Java",
           },
         },
         {
@@ -116,43 +109,64 @@ const budgetSelectionObject = {
   type: "interactive",
   interactive: {
     type: "button",
-    header: {
-      type: "text",
-      text: "Select Budget",
-    },
     body: {
-      text: "Choose a budget range:",
-    },
-    footer: {
-      text: "Select your budget",
+      text: "Select your budget range:",
     },
     action: {
       buttons: [
         {
           type: "reply",
           reply: {
-            id: "budget_below_10k",
-            title: "Below 10K",
+            id: "budget_below_10000",
+            title: "Below 10000",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "budget_10k_50k",
-            title: "10K-50K",
+            id: "budget_10000_50000",
+            title: "10000-50000",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "budget_above_50k",
-            title: "Above 50K",
+            id: "budget_above_50000",
+            title: "Above 50000",
           },
         },
       ],
     },
   },
 };
+
+const confirmationObject = (details) => ({
+  type: "interactive",
+  interactive: {
+    type: "button",
+    body: {
+      text: `Please confirm your details:\n\nService: ${details.service}\nLanguage: ${details.language}\nBudget: ${details.budget}\nAre these details correct?`,
+    },
+    action: {
+      buttons: [
+        {
+          type: "reply",
+          reply: {
+            id: "confirmation_yes",
+            title: "Yes",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "confirmation_no",
+            title: "No",
+          },
+        },
+      ],
+    },
+  },
+});
 
 let userSelections = {};
 
@@ -180,126 +194,87 @@ app.post("/webhook", async (req, res) => {
       console.log("From: " + from);
       console.log("Selected ID: " + selected_id);
 
-      if (!userSelections[from]) {
-        userSelections[from] = {};
+      let responseObject = serviceSelectionObject;
+      if (selected_id) {
+        if (selected_id.startsWith("web_development") || selected_id.startsWith("app_development") || selected_id.startsWith("automation")) {
+          userSelections[from] = { service: selected_id.replace(/_/g, " ") };
+          responseObject = languageSelectionObject;
+        } else if (selected_id.startsWith("lang_")) {
+          userSelections[from].language = selected_id.replace("lang_", "").replace(/_/g, " ");
+          responseObject = budgetSelectionObject;
+        } else if (selected_id.startsWith("budget_")) {
+          userSelections[from].budget = selected_id.replace("budget_", "").replace(/_/g, " ");
+          responseObject = confirmationObject(userSelections[from]);
+        } else if (selected_id === "confirmation_yes") {
+          let clientDetails = userSelections[from];
+          let messageToAdmin = `Client Number: ${from}\nService: ${clientDetails.service}\nLanguage: ${clientDetails.language}\nBudget: ${clientDetails.budget}`;
+          
+          try {
+            // Send message to admin
+            await axios({
+              method: "POST",
+              url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+              data: {
+                messaging_product: "whatsapp",
+                to: adminPhoneNumber,
+                text: {
+                  body: messageToAdmin,
+                },
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            // Send thank you message to client
+            await axios({
+              method: "POST",
+              url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+              data: {
+                messaging_product: "whatsapp",
+                to: from,
+                text: {
+                  body: "Thank you for your details. Our team is reviewing your request and will contact you shortly. For more information, please call +919895260915.",
+                },
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            res.sendStatus(200);
+          } catch (error) {
+            console.error("Error sending message:", error.response ? error.response.data : error.message);
+            res.sendStatus(500);
+          }
+          return;
+        } else if (selected_id === "confirmation_no") {
+          // Reset the selections and start over
+          userSelections[from] = {};
+          responseObject = serviceSelectionObject;
+        }
       }
 
-      if (selected_id.startsWith("service_")) {
-        let services = {
-          "service_web_dev": "Web Development",
-          "service_app_dev": "App Development",
-          "service_auto": "Automation",
-        };
-        userSelections[from].service = services[selected_id];
+      try {
+        const response = await axios({
+          method: "POST",
+          url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+          data: {
+            messaging_product: "whatsapp",
+            to: from,
+            type: responseObject.type,
+            interactive: responseObject.interactive,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-        try {
-          const response = await axios({
-            method: "POST",
-            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-            data: {
-              messaging_product: "whatsapp",
-              to: from,
-              type: languageSelectionObject.type,
-              interactive: languageSelectionObject.interactive,
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          console.log("Message sent successfully:", response.data);
-          res.sendStatus(200);
-        } catch (error) {
-          console.error("Error sending message:", error.response ? error.response.data : error.message);
-          res.sendStatus(500);
-        }
-      } else if (selected_id.startsWith("lang_")) {
-        const languages = {
-          "lang_js": "JavaScript",
-          "lang_py": "Python",
-          "lang_java": "Java",
-          "lang_php": "PHP",
-        };
-        userSelections[from].language = languages[selected_id];
-
-        try {
-          const response = await axios({
-            method: "POST",
-            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-            data: {
-              messaging_product: "whatsapp",
-              to: from,
-              type: budgetSelectionObject.type,
-              interactive: budgetSelectionObject.interactive,
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          console.log("Message sent successfully:", response.data);
-          res.sendStatus(200);
-        } catch (error) {
-          console.error("Error sending message:", error.response ? error.response.data : error.message);
-          res.sendStatus(500);
-        }
-      } else if (selected_id.startsWith("budget_")) {
-        const budgets = {
-          "budget_below_10k": "Below 10000",
-          "budget_10k_50k": "Between 10000 and 50000",
-          "budget_above_50k": "Above 50000",
-        };
-        userSelections[from].budget = budgets[selected_id];
-
-        try {
-          const response = await axios({
-            method: "POST",
-            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-            data: {
-              messaging_product: "whatsapp",
-              to: adminPhoneNumber,
-              type: "text",
-              text: {
-                body: `Client Number: ${from}\nService: ${userSelections[from].service}\nLanguage: ${userSelections[from].language}\nBudget: ${userSelections[from].budget}`,
-              },
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          console.log("Message sent successfully:", response.data);
-          res.sendStatus(200);
-        } catch (error) {
-          console.error("Error sending message:", error.response ? error.response.data : error.message);
-          res.sendStatus(500);
-        }
-
-        // Clear the user selection after sending the message
-        delete userSelections[from];
-      } else {
-        // Handle other cases, e.g., initial interaction
-        try {
-          const response = await axios({
-            method: "POST",
-            url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-            data: {
-              messaging_product: "whatsapp",
-              to: from,
-              type: serviceSelectionObject.type,
-              interactive: serviceSelectionObject.interactive,
-            },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          console.log("Message sent successfully:", response.data);
-          res.sendStatus(200);
-        } catch (error) {
-          console.error("Error sending message:", error.response ? error.response.data : error.message);
-          res.sendStatus(500);
-        }
+        console.log("Message sent successfully:", response.data);
+        res.sendStatus(200);
+      } catch (error) {
+        console.error("Error sending message:", error.response ? error.response.data : error.message);
+        res.sendStatus(500);
       }
     } else {
       res.sendStatus(404);
