@@ -7,7 +7,7 @@ const app = express().use(body_parser.json());
 
 const token = process.env.TOKEN;
 const mytoken = process.env.MYTOKEN;
-const adminPhoneNumber = "9895260915"; // The phone number to send the final message to
+const adminPhoneNumber = "919895260915"; // The phone number to send the final message to
 
 app.listen(process.env.PORT, () => {
   console.log("Webhook is listening");
@@ -40,28 +40,28 @@ const serviceSelectionObject = {
       text: "What can I help you with?",
     },
     footer: {
-      text: "Please select an option",
+      text: "Select an option",
     },
     action: {
       buttons: [
         {
           type: "reply",
           reply: {
-            id: "service_web_development",
-            title: "Web Development",
+            id: "service_web_dev",
+            title: "Web Dev",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "service_app_development",
-            title: "App Development",
+            id: "service_app_dev",
+            title: "App Dev",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "service_automation",
+            id: "service_auto",
             title: "Automation",
           },
         },
@@ -76,10 +76,10 @@ const languageSelectionObject = {
     type: "button",
     header: {
       type: "text",
-      text: "Select Development Language",
+      text: "Select Language",
     },
     body: {
-      text: "Choose one of the following languages:",
+      text: "Choose a language:",
     },
     footer: {
       text: "Select your preferred language",
@@ -89,14 +89,14 @@ const languageSelectionObject = {
         {
           type: "reply",
           reply: {
-            id: "lang_javascript",
+            id: "lang_js",
             title: "JavaScript",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "lang_python",
+            id: "lang_py",
             title: "Python",
           },
         },
@@ -118,10 +118,10 @@ const budgetSelectionObject = {
     type: "button",
     header: {
       type: "text",
-      text: "Select Your Budget",
+      text: "Select Budget",
     },
     body: {
-      text: "Choose one of the following budget ranges:",
+      text: "Choose a budget range:",
     },
     footer: {
       text: "Select your budget",
@@ -131,22 +131,22 @@ const budgetSelectionObject = {
         {
           type: "reply",
           reply: {
-            id: "budget_below_10000",
-            title: "Below 10000",
+            id: "budget_below_10k",
+            title: "Below 10K",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "budget_10000_50000",
-            title: "Between 10000 and 50000",
+            id: "budget_10k_50k",
+            title: "10K-50K",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "budget_above_50000",
-            title: "Above 50000",
+            id: "budget_above_50k",
+            title: "Above 50K",
           },
         },
       ],
@@ -186,9 +186,9 @@ app.post("/webhook", async (req, res) => {
 
       if (selected_id.startsWith("service_")) {
         let services = {
-          "service_web_development": "Web Development",
-          "service_app_development": "App Development",
-          "service_automation": "Automation",
+          "service_web_dev": "Web Development",
+          "service_app_dev": "App Development",
+          "service_auto": "Automation",
         };
         userSelections[from].service = services[selected_id];
 
@@ -215,8 +215,8 @@ app.post("/webhook", async (req, res) => {
         }
       } else if (selected_id.startsWith("lang_")) {
         const languages = {
-          "lang_javascript": "JavaScript",
-          "lang_python": "Python",
+          "lang_js": "JavaScript",
+          "lang_py": "Python",
           "lang_java": "Java",
           "lang_php": "PHP",
         };
@@ -245,9 +245,9 @@ app.post("/webhook", async (req, res) => {
         }
       } else if (selected_id.startsWith("budget_")) {
         const budgets = {
-          "budget_below_10000": "Below 10000",
-          "budget_10000_50000": "Between 10000 and 50000",
-          "budget_above_50000": "Above 50000",
+          "budget_below_10k": "Below 10000",
+          "budget_10k_50k": "Between 10000 and 50000",
+          "budget_above_50k": "Above 50000",
         };
         userSelections[from].budget = budgets[selected_id];
 
