@@ -93,13 +93,6 @@ const languageSelectionObject = {
             title: "Java",
           },
         },
-        {
-          type: "reply",
-          reply: {
-            id: "lang_php",
-            title: "PHP",
-          },
-        },
       ],
     },
   },
