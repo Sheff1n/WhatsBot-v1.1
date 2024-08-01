@@ -227,8 +227,8 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               // ],
             },
             {
-              type: "button",
-              sub_type: "quick_reply",
+              type: "url",
+              // sub_type: "quick_reply",
               index: "1",
               // parameters: [
               //   {
