@@ -219,24 +219,24 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               type: "button",
               sub_type: "quick_reply",
               index: "0",
-              parameters: [
-                {
-                  type: "payload",
-                  payload: "PAYLOAD",
-                },
-              ],
+              // parameters: [
+              //   {
+              //     type: "payload",
+              //     payload: "PAYLOAD",
+              //   },
+              // ],
             },
-            // {
-            //   type: "button",
-            //   sub_type: "quick_reply",
-            //   index: "1",
-            //   parameters: [
-            //     {
-            //       type: "payload",
-            //       payload: "PAYLOAD",
-            //     },
-            //   ],
-            // },
+            {
+              type: "button",
+              sub_type: "quick_reply",
+              index: "1",
+              // parameters: [
+              //   {
+              //     type: "payload",
+              //     payload: "PAYLOAD",
+              //   },
+              // ],
+            },
           ],
         },
       },
