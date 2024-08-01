@@ -187,7 +187,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
                 {
                   type: "image",
                   image: {
-                    link: "http(s)://URL", // Replace with your image URL
+                    link: "https://assets-global.website-files.com/5b6df8bb681f89c158b48f6b/5cdac74a566a61b1d7996adb_What%27s-A-Career-In-Technical-Support-And-Help-Desk-Like.jpg", // 
                   },
                 },
               ],
