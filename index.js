@@ -226,14 +226,28 @@ app.post("/webhook", async (req, res) => {
               data: {
                 messaging_product: "whatsapp",
                 to: from,
-                text: {
-                  body: "Thank you for your details. Our team is reviewing your request and will contact you shortly. For more information, please call +919895260915.",
+                type: "interactive",
+                interactive: {
+                  type: "button",
+                  body: {
+                    text: "Thank you for your details. Our team is reviewing your request and will contact you shortly. For more information, please call or click the button below to call us.",
+                  },
+                  action: {
+                    buttons: [
+                      {
+                        type: "phone_number",
+                        phone_number: "+919895260915",
+                        title: "Call Us",
+                      },
+                    ],
+                  },
                 },
               },
               headers: {
                 "Content-Type": "application/json",
               },
             });
+            
 
             res.sendStatus(200);
           } catch (error) {
