@@ -195,24 +195,24 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
             {
               type: "body",
               parameters: [
-                {
-                  type: "text",
-                  text: "Thank you for contacting us!", // Your custom text
-                },
-                {
-                  type: "currency",
-                  currency: {
-                    fallback_value: "10.00",
-                    code: "USD",
-                    amount_1000: 10000,
-                  },
-                },
-                {
-                  type: "date_time",
-                  date_time: {
-                    fallback_value: "August 1, 2024",
-                  },
-                },
+                // {
+                //   type: "text",
+                //   text: "Thank you for contacting us!", // Your custom text
+                // },
+                // {
+                //   type: "currency",
+                //   currency: {
+                //     fallback_value: "10.00",
+                //     code: "USD",
+                //     amount_1000: 10000,
+                //   },
+                // },
+                // {
+                //   type: "date_time",
+                //   date_time: {
+                //     fallback_value: "August 1, 2024",
+                //   },
+                // },
               ],
             },
             {
