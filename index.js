@@ -161,6 +161,93 @@ const confirmationObject = (details) => ({
   },
 });
 
+const sendTemplateMessage = async (phone_number_id, to, access_token) => {
+  try {
+    const response = await axios({
+      method: "POST",
+      url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: to,
+        type: "template",
+        template: {
+          name: "thank_you",
+          language: {
+            code: "en_US",
+          },
+          components: [
+            {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: {
+                    link: "http(s)://URL", // Replace with your image URL
+                  },
+                },
+              ],
+            },
+            {
+              type: "body",
+              parameters: [
+                {
+                  type: "text",
+                  text: "Thank you for contacting us!", // Your custom text
+                },
+                {
+                  type: "currency",
+                  currency: {
+                    fallback_value: "10.00",
+                    code: "USD",
+                    amount_1000: 10000,
+                  },
+                },
+                {
+                  type: "date_time",
+                  date_time: {
+                    fallback_value: "August 1, 2024",
+                  },
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "quick_reply",
+              index: "0",
+              parameters: [
+                {
+                  type: "payload",
+                  payload: "PAYLOAD",
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "quick_reply",
+              index: "1",
+              parameters: [
+                {
+                  type: "payload",
+                  payload: "PAYLOAD",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    console.log("Template message sent successfully:", response.data);
+  } catch (error) {
+    console.error("Error sending template message:", error.response ? error.response.data : error.message);
+  }
+};
+
 let userSelections = {};
 
 app.post("/webhook", async (req, res) => {
@@ -201,7 +288,7 @@ app.post("/webhook", async (req, res) => {
         } else if (selected_id === "confirmation_yes") {
           let clientDetails = userSelections[from];
           let messageToAdmin = `Client Number: ${from}\nService: ${clientDetails.service}\nLanguage: ${clientDetails.language}\nBudget: ${clientDetails.budget}`;
-          
+
           try {
             // Send message to admin
             await axios({
@@ -219,35 +306,8 @@ app.post("/webhook", async (req, res) => {
               },
             });
 
-            // Send thank you message to client
-            await axios({
-              method: "POST",
-              url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-              data: {
-                messaging_product: "whatsapp",
-                to: from,
-                type: "interactive",
-                interactive: {
-                  type: "button",
-                  body: {
-                    text: "Thank you for your details. Our team is reviewing your request and will contact you shortly. For more information, please call or click the button below to call us.",
-                  },
-                  action: {
-                    buttons: [
-                      {
-                        type: "phone_number",
-                        phone_number: "+919895260915",
-                        title: "Call Us",
-                      },
-                    ],
-                  },
-                },
-              },
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-            
+            // Send thank you template message to client
+            await sendTemplateMessage(phon_no_id, from, token);
 
             res.sendStatus(200);
           } catch (error) {
