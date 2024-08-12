@@ -176,22 +176,23 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         to: to,
         type: "template",
         template: {
-          name: "test_2",
+          name: "thank_you",
           language: {
             code: "en_US",
           },
           components: [
-            // {
-            //   type: "header",
-            //   parameters: [
-            //     {
-            //       type: "image",
-            //       image: {
-            //         link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
-            //       },
-            //     },
-            //   ],
-            // },
+            {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: {
+                    link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
+                  },
+                },
+              ],
+            },
+            
             {
               type: "body",
               parameters: [
@@ -202,40 +203,20 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               ],
             },
             {
-              type: "button",
-              title: "Open Google",
-              click: {
-                actions: [
-                  {
-                    type: "link",
-                    uri: "https://www.google.com"
-                  }
-                ]
-              }
-            }
-            
-            // {
-            //   type: "button",
-            //   sub_type: "url",
-            //   index:0,
-            //   parameters: [
-            //     {
-            //       type: "text",
-            //       text: "https://sheffin.online/",
-            //     },
-            //   ],
-            // },
-            // {
-            //   type: "button",
-            //   sub_type: "url",
-            //   index: "1",
-            //   parameters: [
-            //     {
-            //       type: "text",
-            //       text: "tel:9895260915", // Simulate a call button using tel: scheme
-            //     },
-            //   ],
-            // },
+              type: "buttons",
+              buttons: [
+                {
+                  type: "PHONE_NUMBER",
+                  text: "Call",
+                  phone_number: "9895260915", // Your phone number here
+                },
+                {
+                  type: "URL",
+                  text: "Visit Website",
+                  url: "https://sheffin.online/", // Your URL here
+                },
+              ],
+            },
           ],
         },
       },
