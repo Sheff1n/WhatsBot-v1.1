@@ -176,20 +176,11 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         to: to,
         type: "template",
         template: {
-          name: "hello_world",
+          name: "test_1",
           language: {
             code: "en_US",
           },
           components: [
-            {
-              type: "header",
-              parameters: [
-                {
-                  type: "text",
-                  text: "text-string"
-                },
-              ],
-            },
             {
               type: "body",
               parameters: [
