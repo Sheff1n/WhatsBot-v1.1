@@ -215,9 +215,13 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
             {
               type: "button",
               sub_type: "url",
-              index: 1,
-              // parameters: [], 
-              // phone_number: "9895260915", 
+              index: "1",
+              parameters: [
+                {
+                  type: "text",
+                  text: "tel:9895260915", // Simulate a call button using tel: scheme
+                },
+              ],
             },
           ],
         },
