@@ -178,15 +178,46 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         template: {
           name: "test_1",
           language: {
-            code: "en",
+            code: "en_US",
           },
           components: [
+            {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg"
+                },
+              ],
+            },
             {
               type: "body",
               parameters: [
                 {
                   type: "text",
-                  text: "Thank you for contacting us!", // Your custom text
+                  text: "Sheffin",
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "url",
+              index:0,
+              parameters: [
+                {
+                  type: "text",
+                  text: "https://sheffin.online/",
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "url",
+              index:1,
+              parameters: [
+                {
+                  type: "text",
+                  text: "tel:9895260915",
                 },
               ],
             },
