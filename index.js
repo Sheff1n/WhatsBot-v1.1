@@ -199,15 +199,6 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
                 },
               ],
             },
-            {
-              type: "footer",
-              parameters: [
-                {
-                  type: "text",
-                  text: "Thank you for contacting us!", // Your custom text
-                },
-              ],
-            },
           ],
         },
       },
