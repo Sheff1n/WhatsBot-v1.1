@@ -203,15 +203,28 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
             },
             {
               type: "button",
-              sub_type: "url",
-              index:0,
-              // parameters: [
-              //   {
-              //     type: "text",
-              //     text: "https://sheffin.online/",
-              //   },
-              // ],
-            },
+              title: "Open Google",
+              click: {
+                actions: [
+                  {
+                    type: "link",
+                    uri: "https://www.google.com"
+                  }
+                ]
+              }
+            }
+            
+            // {
+            //   type: "button",
+            //   sub_type: "url",
+            //   index:0,
+            //   parameters: [
+            //     {
+            //       type: "text",
+            //       text: "https://sheffin.online/",
+            //     },
+            //   ],
+            // },
             // {
             //   type: "button",
             //   sub_type: "url",
