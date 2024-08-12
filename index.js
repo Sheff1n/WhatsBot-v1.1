@@ -186,7 +186,9 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               parameters: [
                 {
                   type: "image",
-                  image: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg"
+                  image: {
+                    link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
+                  },
                 },
               ],
             },
