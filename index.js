@@ -176,7 +176,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         to: to,
         type: "template",
         template: {
-          name: "thank_you",
+          name: "hello_world",
           language: {
             code: "en_US",
           },
@@ -185,77 +185,29 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               type: "header",
               parameters: [
                 {
-                  type: "image",
-                  image: {
-                    link: "https://assets-global.website-files.com/5b6df8bb681f89c158b48f6b/5cdac74a566a61b1d7996adb_What%27s-A-Career-In-Technical-Support-And-Help-Desk-Like.jpg", // 
-                  },
+                  type: "text",
+                  text: "text-string"
                 },
               ],
             },
             {
               type: "body",
               parameters: [
-                // {
-                //   type: "text",
-                //   text: "Thank you for contacting us!", // Your custom text
-                // },
-                // {
-                //   type: "currency",
-                //   currency: {
-                //     fallback_value: "10.00",
-                //     code: "USD",
-                //     amount_1000: 10000,
-                //   },
-                // },
-                // {
-                //   type: "date_time",
-                //   date_time: {
-                //     fallback_value: "August 1, 2024",
-                //   },
-                // },
-              ],
-            },
-            // {
-            //   type: "button",
-            //   sub_type: "quick_reply",
-            //   index: "0",
-            //   parameters: [
-            //     {
-            //       type: "payload",
-            //       payload: "PAYLOAD",
-            //     },
-            //   ],
-            // },
-            // {
-            //   type: "button",
-            //   sub_type: "quick_reply",
-            //   index: "1",
-            //   parameters: [
-            //     {
-            //       type: "payload",
-            //       payload: "PAYLOAD",
-            //     },
-            //   ],
-            // },
-            {
-              type: "button",
-              parameters: [
                 {
-                  type: "payload",
-                  payload: "PAYLOAD_1",
+                  type: "text",
+                  text: "Thank you for contacting us!", // Your custom text
                 },
               ],
             },
             {
-              type: "button",
+              type: "footer",
               parameters: [
                 {
-                  type: "payload",
-                  payload: "PAYLOAD_2",
+                  type: "text",
+                  text: "Thank you for contacting us!", // Your custom text
                 },
               ],
             },
-
           ],
         },
       },
