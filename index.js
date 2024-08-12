@@ -176,7 +176,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         to: to,
         type: "template",
         template: {
-          name: "test_1",
+          name: "thank_you",
           language: {
             code: "en_US",
           },
