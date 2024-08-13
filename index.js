@@ -192,7 +192,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
                 },
               ],
             },
-            
+
             {
               type: "body",
               parameters: [
@@ -203,19 +203,20 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               ],
             },
             {
-              type: "buttons",
-              buttons: [
-                {
-                  type: "PHONE_NUMBER",
-                  text: "Call",
-                  phone_number: "9895260915", // Your phone number here
-                },
-                {
-                  type: "URL",
-                  text: "Visit Website",
-                  url: "https://sheffin.online/", // Your URL here
-                },
-              ],
+              action: {
+                buttons: [
+                  {
+                    type: "PHONE_NUMBER",
+                    text: "Call",
+                    phone_number: "9895260915", // Your phone number here
+                  },
+                  {
+                    type: "URL",
+                    text: "Visit Website",
+                    url: "https://sheffin.online/", // Your URL here
+                  },
+                ],
+              },
             },
           ],
         },
@@ -224,7 +225,10 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
 
     console.log("Template message sent successfully:", response.data);
   } catch (error) {
-    console.error("Error sending template message:", error.response ? error.response.data : error.message);
+    console.error(
+      "Error sending template message:",
+      error.response ? error.response.data : error.message
+    );
   }
 };
 
@@ -243,12 +247,15 @@ app.post("/webhook", async (req, res) => {
       body_param.entry[0].changes[0].value.messages &&
       body_param.entry[0].changes[0].value.messages[0]
     ) {
-      let phon_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
+      let phon_no_id =
+        body_param.entry[0].changes[0].value.metadata.phone_number_id;
       let from = body_param.entry[0].changes[0].value.messages[0].from;
 
       // Check if the message is a button response
       let message = body_param.entry[0].changes[0].value.messages[0];
-      let selected_id = message.interactive ? message.interactive.button_reply.id : "";
+      let selected_id = message.interactive
+        ? message.interactive.button_reply.id
+        : "";
 
       console.log("Phone number: " + phon_no_id);
       console.log("From: " + from);
@@ -256,14 +263,22 @@ app.post("/webhook", async (req, res) => {
 
       let responseObject = serviceSelectionObject;
       if (selected_id) {
-        if (selected_id.startsWith("web_development") || selected_id.startsWith("app_development") || selected_id.startsWith("automation")) {
+        if (
+          selected_id.startsWith("web_development") ||
+          selected_id.startsWith("app_development") ||
+          selected_id.startsWith("automation")
+        ) {
           userSelections[from] = { service: selected_id.replace(/_/g, " ") };
           responseObject = languageSelectionObject;
         } else if (selected_id.startsWith("lang_")) {
-          userSelections[from].language = selected_id.replace("lang_", "").replace(/_/g, " ");
+          userSelections[from].language = selected_id
+            .replace("lang_", "")
+            .replace(/_/g, " ");
           responseObject = budgetSelectionObject;
         } else if (selected_id.startsWith("budget_")) {
-          userSelections[from].budget = selected_id.replace("budget_", "").replace(/_/g, " ");
+          userSelections[from].budget = selected_id
+            .replace("budget_", "")
+            .replace(/_/g, " ");
           responseObject = confirmationObject(userSelections[from]);
         } else if (selected_id === "confirmation_yes") {
           let clientDetails = userSelections[from];
@@ -291,7 +306,10 @@ app.post("/webhook", async (req, res) => {
 
             res.sendStatus(200);
           } catch (error) {
-            console.error("Error sending message:", error.response ? error.response.data : error.message);
+            console.error(
+              "Error sending message:",
+              error.response ? error.response.data : error.message
+            );
             res.sendStatus(500);
           }
           return;
@@ -320,7 +338,10 @@ app.post("/webhook", async (req, res) => {
         console.log("Message sent successfully:", response.data);
         res.sendStatus(200);
       } catch (error) {
-        console.error("Error sending message:", error.response ? error.response.data : error.message);
+        console.error(
+          "Error sending message:",
+          error.response ? error.response.data : error.message
+        );
         res.sendStatus(500);
       }
     } else {
