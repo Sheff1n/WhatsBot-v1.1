@@ -234,42 +234,13 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
       },
       data: {
         messaging_product: "whatsapp",
-        recipient_type: "individual",
         to: to,
         type: "template",
         template: {
-          name: "thank_you_2",
+          name: "hello_world", // The name of your template
           language: {
-            code: "en",
+            code: "en_US", // Language code for the template
           },
-          components: [
-            {
-              type: "header",
-              parameters: [
-                {
-                  type: "image",
-                  image: {
-                    link: "https://images.shiksha.com/mediadata/images/articles/1513768929php7jR4DL.jpeg",
-                  },
-                },
-              ],
-            },
-            {
-              type: "body",
-              parameters: [
-                {
-                  type: "text",
-                  text: "Sheffin",
-                },
-              ],
-            },
-            {
-              type: "button",
-              sub_type: "url",
-              index:0,
-              // parameters: [],
-            },
-          ],
         },
       },
     });
@@ -279,6 +250,7 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
     console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
 };
+
 
 let userSelections = {};
 
