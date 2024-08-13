@@ -223,6 +223,73 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
   }
 };
 
+const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
+  try {
+    const response = await axios({
+      method: "POST",
+      url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: to,
+        type: "template",
+        template: {
+          name: "thank_you",
+          language: {
+            code: "en_US",
+          },
+          components: [
+            {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: {
+                    link: "https://images.shiksha.com/mediadata/images/articles/1513768929php7jR4DL.jpeg",
+                  },
+                },
+              ],
+            },
+            {
+              type: "body",
+              parameters: [
+                {
+                  type: "text",
+                  text: "Sheffin",
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "url",
+              index:0,
+              parameters: [
+                {
+                  type: "text",
+                  text: "/",
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "url",
+              index:1,
+            },
+          ],
+        },
+      },
+    });
+
+    console.log("Template message sent successfully:", response.data);
+  } catch (error) {
+    console.error("Error sending template message:", error.response ? error.response.data : error.message);
+  }
+};
+
 let userSelections = {};
 
 app.post("/webhook", async (req, res) => {
@@ -283,6 +350,8 @@ app.post("/webhook", async (req, res) => {
 
             // Send thank you template message to client
             await sendTemplateMessage(phon_no_id, from, token);
+
+            await sendTemplateMessage1(phon_no_id, from, token);
 
             res.sendStatus(200);
           } catch (error) {
