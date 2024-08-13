@@ -238,9 +238,9 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
         to: to,
         type: "template",
         template: {
-          name: "thank_you",
+          name: "thank_you_2",
           language: {
-            code: "en_US",
+            code: "en",
           },
           components: [
             {
@@ -265,19 +265,8 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
             },
             {
               type: "button",
-              sub_type: "url",
+              sub_type: "call",
               index:0,
-              parameters: [
-                {
-                  type: "text",
-                  text: "/",
-                },
-              ],
-            },
-            {
-              type: "button",
-              sub_type: "url",
-              index:1,
             },
           ],
         },
