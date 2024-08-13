@@ -187,7 +187,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
                 {
                   type: "image",
                   image: {
-                    link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
+                    link: "https://images.shiksha.com/mediadata/images/articles/1513768929php7jR4DL.jpeg",
                   },
                 },
               ],
