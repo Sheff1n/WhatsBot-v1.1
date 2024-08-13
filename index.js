@@ -240,13 +240,21 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
           buttons: [
             {
               type: "PHONE_NUMBER",
-              text: "Call",
-              phone_number: "15550051310"
+              parameters: [
+                {
+                  text: "Call",
+                  phone_number: "15550051310",
+                },
+              ],
             },
             {
               type: "URL",
-              text: "Contact Support",
-              url: "https://sheffin.online"
+              parameters: [
+                {
+                  text: "Visit Website",
+                  url: "https://sheffin.online",
+                },
+              ],
             }
           ]
         }
