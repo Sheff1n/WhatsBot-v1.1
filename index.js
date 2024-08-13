@@ -323,7 +323,7 @@ app.post("/webhook", async (req, res) => {
                     buttons: [
                       {
                         type: "url",
-                        sub_type: "url",
+                        // sub_type: "url",
                         index: "0",
                         parameters: [
                           {
