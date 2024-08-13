@@ -176,7 +176,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         to: to,
         type: "template",
         template: {
-          name: "thank_you", // Your template name
+          name: "thank_you_1",
           language: {
             code: "en_US",
           },
@@ -187,7 +187,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
                 {
                   type: "image",
                   image: {
-                    link: "https://example.com/path/to/your/image.jpg", // URL to the image
+                    link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
                   },
                 },
               ],
@@ -197,29 +197,18 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               parameters: [
                 {
                   type: "text",
-                  text: "Sheffin", // This text will replace a placeholder in the body
+                  text: "Sheffin",
                 },
               ],
             },
             {
               type: "button",
-              sub_type: "url", // Correct sub_type for a URL button
-              index: "0",
+              sub_type: "url",
+              index:0,
               parameters: [
                 {
                   type: "text",
-                  text: "https://sheffin.online/", // URL to your website
-                },
-              ],
-            },
-            {
-              type: "button",
-              sub_type: "call", // Another URL button for phone calls
-              index: "1",
-              parameters: [
-                {
-                  type: "phone_number",
-                  phone_number: "+9895260915", // The phone number to be called
+                  text: "https://sheffin.online/",
                 },
               ],
             },
@@ -249,15 +238,12 @@ app.post("/webhook", async (req, res) => {
       body_param.entry[0].changes[0].value.messages &&
       body_param.entry[0].changes[0].value.messages[0]
     ) {
-      let phon_no_id =
-        body_param.entry[0].changes[0].value.metadata.phone_number_id;
+      let phon_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
       let from = body_param.entry[0].changes[0].value.messages[0].from;
 
       // Check if the message is a button response
       let message = body_param.entry[0].changes[0].value.messages[0];
-      let selected_id = message.interactive
-        ? message.interactive.button_reply.id
-        : "";
+      let selected_id = message.interactive ? message.interactive.button_reply.id : "";
 
       console.log("Phone number: " + phon_no_id);
       console.log("From: " + from);
@@ -265,22 +251,14 @@ app.post("/webhook", async (req, res) => {
 
       let responseObject = serviceSelectionObject;
       if (selected_id) {
-        if (
-          selected_id.startsWith("web_development") ||
-          selected_id.startsWith("app_development") ||
-          selected_id.startsWith("automation")
-        ) {
+        if (selected_id.startsWith("web_development") || selected_id.startsWith("app_development") || selected_id.startsWith("automation")) {
           userSelections[from] = { service: selected_id.replace(/_/g, " ") };
           responseObject = languageSelectionObject;
         } else if (selected_id.startsWith("lang_")) {
-          userSelections[from].language = selected_id
-            .replace("lang_", "")
-            .replace(/_/g, " ");
+          userSelections[from].language = selected_id.replace("lang_", "").replace(/_/g, " ");
           responseObject = budgetSelectionObject;
         } else if (selected_id.startsWith("budget_")) {
-          userSelections[from].budget = selected_id
-            .replace("budget_", "")
-            .replace(/_/g, " ");
+          userSelections[from].budget = selected_id.replace("budget_", "").replace(/_/g, " ");
           responseObject = confirmationObject(userSelections[from]);
         } else if (selected_id === "confirmation_yes") {
           let clientDetails = userSelections[from];
@@ -304,81 +282,42 @@ app.post("/webhook", async (req, res) => {
             });
 
             // Send thank you template message to client
-            // await sendTemplateMessage(phon_no_id, from, token);
-
-            // Send a follow-up message with a URL button
-            await axios({
-              method: "POST",
-              url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-              data: {
-                messaging_product: "whatsapp",
-                to: from,
-                type: "interactive",
-                interactive: {
-                  type: "button",
-                  body: {
-                    text: "Thank you for confirming! You can visit our website for more information.",
-                  },
-                  action: {
-                    buttons: [
-                      {
-                        type: "url",
-                        // sub_type: "url",
-                        // index: "0",
-                        parameters: [
-                          {
-                            type: "text",
-                            text: "https://sheffin.online/"
-                          }
-                        ]
-                      }
-                    ],
-                  },            
-                },
-              },
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
+            await sendTemplateMessage(phon_no_id, from, token);
 
             res.sendStatus(200);
           } catch (error) {
-            console.error(
-              "Error sending interactive message:",
-              error.response ? error.response.data : error.message
-            );
+            console.error("Error sending message:", error.response ? error.response.data : error.message);
             res.sendStatus(500);
           }
           return;
         } else if (selected_id === "confirmation_no") {
-          delete userSelections[from];
+          // Reset the selections and start over
+          userSelections[from] = {};
           responseObject = serviceSelectionObject;
         }
       }
 
-      axios({
-        method: "POST",
-        url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-        data: {
-          messaging_product: "whatsapp",
-          to: from,
-          ...responseObject,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          console.log("Message sent successfully:", response.data);
-          res.sendStatus(200);
-        })
-        .catch((error) => {
-          console.error(
-            "Error sending message:",
-            error.response ? error.response.data : error.message
-          );
-          res.sendStatus(500);
+      try {
+        const response = await axios({
+          method: "POST",
+          url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+          data: {
+            messaging_product: "whatsapp",
+            to: from,
+            type: responseObject.type,
+            interactive: responseObject.interactive,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+
+        console.log("Message sent successfully:", response.data);
+        res.sendStatus(200);
+      } catch (error) {
+        console.error("Error sending message:", error.response ? error.response.data : error.message);
+        res.sendStatus(500);
+      }
     } else {
       res.sendStatus(404);
     }
@@ -386,5 +325,5 @@ app.post("/webhook", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.status(200).send("hello this is webhook setup");
+  res.status(200).send("Hello, this is webhook setup");
 });
