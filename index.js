@@ -269,8 +269,8 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
               index:0,
               parameters: [
                 {
-                  type: "phone_number",
-                  text: "9895260915",
+                  type: "ACTION",
+                  phone_number: "9895260915",
                 },
               ],
             },
