@@ -264,9 +264,15 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
               ],
             },
             {
-              type: "phone_number",
-              // sub_type: "QUICK_REPLY",
+              type: "button",
+              sub_type: "url",
               index:0,
+              parameters: [
+                {
+                  type: "phone_number",
+                  text: "9895260915",
+                },
+              ],
             },
           ],
         },
