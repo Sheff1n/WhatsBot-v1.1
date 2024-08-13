@@ -244,35 +244,55 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         messaging_product: "whatsapp",
         recipient_type: "individual",
         to: to,
-        type: "interactive",
-        interactive: {
-          type: "button", // Specifies it's a button type interactive message
-          body: {
-            text: "Choose an option:",
+        type: "template",
+        template: {
+          name: "your_template_name", // Replace with your approved template name
+          language: {
+            code: "en_US",
           },
-          action: {
-            buttons: [
-              {
-                type: "url", // Call-to-Action button for a URL
-                url: "https://sheffin.online/", // URL to visit
-                title: "Visit Website", // Button text
-              },
-              {
-                type: "phone_number", // Call-to-Action button for a phone call
-                phone_number: "9895260915", // Phone number to call
-                title: "Call Support", // Button text
-              },
-            ],
-          },
+          components: [
+            {
+              type: "body",
+              parameters: [
+                {
+                  type: "text",
+                  text: "Your message here.",
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "url", // URL Button
+              index: "0",
+              parameters: [
+                {
+                  type: "text",
+                  text: "https://sheffin.online/",
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "phone_number", // Phone Call Button
+              index: "1",
+              parameters: [
+                {
+                  type: "text",
+                  text: "9895260915",
+                },
+              ],
+            },
+          ],
         },
       },
     });
 
-    console.log("CTA interactive message sent successfully:", response.data);
+    console.log("Template message sent successfully:", response.data);
   } catch (error) {
-    console.error("Error sending CTA interactive message:", error.response ? error.response.data : error.message);
+    console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
 };
+
 
 
 let userSelections = {};
