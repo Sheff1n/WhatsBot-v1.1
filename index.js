@@ -161,7 +161,77 @@ const confirmationObject = (details) => ({
   },
 });
 
-const sendTemplateMessage = async (phone_number_id, to, access_token) => {
+// const sendTemplateMessage = async (phone_number_id, to, access_token) => {
+//   try {
+//     const response = await axios({
+//       method: "POST",
+//       url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
+//       headers: {
+//         Authorization: `Bearer ${access_token}`,
+//         "Content-Type": "application/json",
+//       },
+//       data: {
+//         messaging_product: "whatsapp",
+//         recipient_type: "individual",
+//         to: to,
+//         type: "template",
+//         template: {
+//           name: "thank_you",
+//           language: {
+//             code: "en_US",
+//           },
+//           components: [
+//             {
+//               type: "header",
+//               parameters: [
+//                 {
+//                   type: "image",
+//                   image: {
+//                     link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
+//                   },
+//                 },
+//               ],
+//             },
+
+//             {
+//               type: "body",
+//               parameters: [
+//                 {
+//                   type: "text",
+//                   text: "Sheffin",
+//                 },
+//               ],
+//             },
+//             {
+//               action: {
+//                 buttons: [
+//                   {
+//                     type: "PHONE_NUMBER",
+//                     text: "Call",
+//                     phone_number: "9895260915", // Your phone number here
+//                   },
+//                   {
+//                     type: "URL",
+//                     text: "Visit Website",
+//                     url: "https://sheffin.online/", // Your URL here
+//                   },
+//                 ],
+//               },
+//             },
+//           ],
+//         },
+//       },
+//     });
+
+//     console.log("Template message sent successfully:", response.data);
+//   } catch (error) {
+//     console.error(
+//       "Error sending template message:",
+//       error.response ? error.response.data : error.message
+//     );
+//   }
+// };
+const sendCTAInteractiveMessage = async (phone_number_id, to, access_token) => {
   try {
     const response = await axios({
       method: "POST",
@@ -174,63 +244,36 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         messaging_product: "whatsapp",
         recipient_type: "individual",
         to: to,
-        type: "template",
-        template: {
-          name: "thank_you",
-          language: {
-            code: "en_US",
+        type: "interactive",
+        interactive: {
+          type: "button", // Specifies it's a button type interactive message
+          body: {
+            text: "Choose an option:",
           },
-          components: [
-            {
-              type: "header",
-              parameters: [
-                {
-                  type: "image",
-                  image: {
-                    link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
-                  },
-                },
-              ],
-            },
-
-            {
-              type: "body",
-              parameters: [
-                {
-                  type: "text",
-                  text: "Sheffin",
-                },
-              ],
-            },
-            {
-              action: {
-                buttons: [
-                  {
-                    type: "PHONE_NUMBER",
-                    text: "Call",
-                    phone_number: "9895260915", // Your phone number here
-                  },
-                  {
-                    type: "URL",
-                    text: "Visit Website",
-                    url: "https://sheffin.online/", // Your URL here
-                  },
-                ],
+          action: {
+            buttons: [
+              {
+                type: "url", // Call-to-Action button for a URL
+                url: "https://sheffin.online/", // URL to visit
+                title: "Visit Website", // Button text
               },
-            },
-          ],
+              {
+                type: "phone_number", // Call-to-Action button for a phone call
+                phone_number: "9895260915", // Phone number to call
+                title: "Call Support", // Button text
+              },
+            ],
+          },
         },
       },
     });
 
-    console.log("Template message sent successfully:", response.data);
+    console.log("CTA interactive message sent successfully:", response.data);
   } catch (error) {
-    console.error(
-      "Error sending template message:",
-      error.response ? error.response.data : error.message
-    );
+    console.error("Error sending CTA interactive message:", error.response ? error.response.data : error.message);
   }
 };
+
 
 let userSelections = {};
 
