@@ -283,8 +283,8 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               ],
             },
             {
-              type: "button",
-              sub_type: "url", // Another URL button for phone calls
+              type: "call",
+              // sub_type: "call", // Another URL button for phone calls
               index: "1",
               parameters: [
                 {
