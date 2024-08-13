@@ -304,7 +304,7 @@ app.post("/webhook", async (req, res) => {
             });
 
             // Send thank you template message to client
-            await sendTemplateMessage(phon_no_id, from, token);
+            // await sendTemplateMessage(phon_no_id, from, token);
 
             // Send a follow-up message with a URL button
             await axios({
@@ -323,13 +323,17 @@ app.post("/webhook", async (req, res) => {
                     buttons: [
                       {
                         type: "url",
-                        url: {
-                          link: "https://sheffin.online/", // Your URL
-                          title: "Visit Website",
-                        },
-                      },
+                        sub_type: "url",
+                        index: "0",
+                        parameters: [
+                          {
+                            type: "text",
+                            text: "https://sheffin.online/"
+                          }
+                        ]
+                      }
                     ],
-                  },
+                  },            
                 },
               },
               headers: {
@@ -340,7 +344,7 @@ app.post("/webhook", async (req, res) => {
             res.sendStatus(200);
           } catch (error) {
             console.error(
-              "Error sending message:",
+              "Error sending interactive message:",
               error.response ? error.response.data : error.message
             );
             res.sendStatus(500);
