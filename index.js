@@ -283,13 +283,13 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               ],
             },
             {
-              type: "call",
-              // sub_type: "call", // Another URL button for phone calls
+              type: "button",
+              sub_type: "call", // Another URL button for phone calls
               index: "1",
               parameters: [
                 {
-                  type: "text",
-                  text: "tel:+9895260915", // Phone call using tel: URL scheme
+                  type: "phone_number",
+                  phone_number: "+9895260915", // The phone number to be called
                 },
               ],
             },
