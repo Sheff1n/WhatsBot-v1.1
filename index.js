@@ -234,9 +234,9 @@ const confirmationObject = (details) => ({
 const sendTemplateMessage = async (phone_number_id, to, access_token) => {
   try {
     const response = await axios.post(
-      `https://api.chat-api.com/${accessToken}/sendMessage`,
+      `https://api.chat-api.com/${access_token}/sendMessage`,
       {
-        phone: phoneNumber,
+        phone: to,
         body: 'Check out this list:',
         list: {
           listType: "SINGLE_SELECT", // Ensure the list type is specified
