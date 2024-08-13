@@ -246,34 +246,45 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
         to: to,
         type: "template",
         template: {
-          name: "thank_you", // Replace with your approved template name
+          name: "thank_you", // Your template name
           language: {
             code: "en_US",
           },
           components: [
             {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: {
+                    link: "https://example.com/path/to/your/image.jpg", // URL to the image
+                  },
+                },
+              ],
+            },
+            {
               type: "body",
               parameters: [
                 {
                   type: "text",
-                  text: "Would you like to call support or visit our website?",
+                  text: "Sheffin", // This text will replace a placeholder in the body
                 },
               ],
             },
             {
               type: "button",
-              sub_type: "url", // Correct sub_type for buttons
+              sub_type: "url", // Correct sub_type for a URL button
               index: "0",
               parameters: [
                 {
                   type: "text",
-                  text: "https://sheffin.online/", // Website URL
+                  text: "https://sheffin.online/", // URL to your website
                 },
               ],
             },
             {
               type: "button",
-              sub_type: "url", // Use URL sub_type for phone calls too
+              sub_type: "url", // Another URL button for phone calls
               index: "1",
               parameters: [
                 {
@@ -292,6 +303,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
     console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
 };
+
 
 
 
