@@ -231,7 +231,7 @@ const confirmationObject = (details) => ({
 //     );
 //   }
 // };
-const sendCTAInteractiveMessage = async (phone_number_id, to, access_token) => {
+const sendTemplateMessage = async (phone_number_id, to, access_token) => {
   try {
     const response = await axios({
       method: "POST",
