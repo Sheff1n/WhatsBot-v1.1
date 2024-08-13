@@ -235,13 +235,21 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
       data: {
         messaging_product: "whatsapp",
         to: to,
-        type: "template",
-        template: {
-          name: "thank_you_2", // The name of your template
-          language: {
-            code: "en", // Language code for the template
-          },
-        },
+        action:{
+          type: "BUTTONS",
+          buttons: [
+            {
+              type: "PHONE_NUMBER",
+              text: "Call",
+              phone_number: "15550051310"
+            },
+            {
+              type: "URL",
+              text: "Contact Support",
+              url: "https://sheffin.online"
+            }
+          ]
+        }
       },
     });
 
