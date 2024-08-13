@@ -161,141 +161,78 @@ const confirmationObject = (details) => ({
   },
 });
 
-// const sendTemplateMessage = async (phone_number_id, to, access_token) => {
-//   try {
-//     const response = await axios({
-//       method: "POST",
-//       url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
-//       headers: {
-//         Authorization: `Bearer ${access_token}`,
-//         "Content-Type": "application/json",
-//       },
-//       data: {
-//         messaging_product: "whatsapp",
-//         recipient_type: "individual",
-//         to: to,
-//         type: "template",
-//         template: {
-//           name: "thank_you",
-//           language: {
-//             code: "en_US",
-//           },
-//           components: [
-//             {
-//               type: "header",
-//               parameters: [
-//                 {
-//                   type: "image",
-//                   image: {
-//                     link: "https://static9.depositphotos.com/1559686/1228/i/450/depositphotos_12286955-stock-photo-technology-in-the-hands.jpg",
-//                   },
-//                 },
-//               ],
-//             },
-
-//             {
-//               type: "body",
-//               parameters: [
-//                 {
-//                   type: "text",
-//                   text: "Sheffin",
-//                 },
-//               ],
-//             },
-//             {
-//               action: {
-//                 buttons: [
-//                   {
-//                     type: "PHONE_NUMBER",
-//                     text: "Call",
-//                     phone_number: "9895260915", // Your phone number here
-//                   },
-//                   {
-//                     type: "URL",
-//                     text: "Visit Website",
-//                     url: "https://sheffin.online/", // Your URL here
-//                   },
-//                 ],
-//               },
-//             },
-//           ],
-//         },
-//       },
-//     });
-
-//     console.log("Template message sent successfully:", response.data);
-//   } catch (error) {
-//     console.error(
-//       "Error sending template message:",
-//       error.response ? error.response.data : error.message
-//     );
-//   }
-// };
 const sendTemplateMessage = async (phone_number_id, to, access_token) => {
   try {
-    const response = await axios.post(
-      `https://api.chat-api.com/${access_token}/sendMessage`,
-      {
-        phone: to,
-        body: 'Check out this list:',
-        list: {
-          listType: "SINGLE_SELECT", // Ensure the list type is specified
-          sections: [
+    const response = await axios({
+      method: "POST",
+      url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: to,
+        type: "template",
+        template: {
+          name: "thank_you", // Your template name
+          language: {
+            code: "en_US",
+          },
+          components: [
             {
-              title: 'Section 1',
-              rows: [
+              type: "header",
+              parameters: [
                 {
-                  title: 'Item 1',
-                  description: 'Description 1',
-                  rowId: 'item1', // Unique identifier for the item
+                  type: "image",
+                  image: {
+                    link: "https://example.com/path/to/your/image.jpg", // URL to the image
+                  },
                 },
+              ],
+            },
+            {
+              type: "body",
+              parameters: [
                 {
-                  title: 'Item 2',
-                  description: 'Description 2',
-                  rowId: 'item2', // Unique identifier for the item
+                  type: "text",
+                  text: "Sheffin", // This text will replace a placeholder in the body
                 },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "url", // Correct sub_type for a URL button
+              index: "0",
+              parameters: [
                 {
-                  title: 'Item 3',
-                  description: 'Description 3',
-                  rowId: 'item3', // Unique identifier for the item
-                }
-              ]
-            }
-          ]
+                  type: "text",
+                  text: "https://sheffin.online/", // URL to your website
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "call", // Another URL button for phone calls
+              index: "1",
+              parameters: [
+                {
+                  type: "phone_number",
+                  phone_number: "+9895260915", // The phone number to be called
+                },
+              ],
+            },
+          ],
         },
-        action: {
-          buttonText: "Choose an option",
-          buttons: [
-            {
-              buttonType: "urlButton",
-              buttonText: "Visit Item 1",
-              url: "https://www.example.com/item1"
-            },
-            {
-              buttonType: "textButton",
-              buttonText: "Text for Item 2",
-              text: "item2"
-            },
-            {
-              buttonType: "textButton",
-              buttonText: "Text for Item 3",
-              text: "item3"
-            }
-          ]
-        }
-      }
-    );
-  
-    console.log("Message sent successfully:", response.data);
+      },
+    });
+
+    console.log("Template message sent successfully:", response.data);
   } catch (error) {
-    console.error("Error sending message:", error.response ? error.response.data : error.message);
+    console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
 };
-
-
-
-
-
 
 let userSelections = {};
 
@@ -369,6 +306,37 @@ app.post("/webhook", async (req, res) => {
             // Send thank you template message to client
             await sendTemplateMessage(phon_no_id, from, token);
 
+            // Send a follow-up message with a URL button
+            await axios({
+              method: "POST",
+              url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+              data: {
+                messaging_product: "whatsapp",
+                to: from,
+                type: "interactive",
+                interactive: {
+                  type: "button",
+                  body: {
+                    text: "Thank you for confirming! You can visit our website for more information.",
+                  },
+                  action: {
+                    buttons: [
+                      {
+                        type: "url",
+                        url: {
+                          link: "https://sheffin.online/", // Your URL
+                          title: "Visit Website",
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
             res.sendStatus(200);
           } catch (error) {
             console.error(
@@ -379,36 +347,34 @@ app.post("/webhook", async (req, res) => {
           }
           return;
         } else if (selected_id === "confirmation_no") {
-          // Reset the selections and start over
-          userSelections[from] = {};
+          delete userSelections[from];
           responseObject = serviceSelectionObject;
         }
       }
 
-      try {
-        const response = await axios({
-          method: "POST",
-          url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-          data: {
-            messaging_product: "whatsapp",
-            to: from,
-            type: responseObject.type,
-            interactive: responseObject.interactive,
-          },
-          headers: {
-            "Content-Type": "application/json",
-          },
+      axios({
+        method: "POST",
+        url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+        data: {
+          messaging_product: "whatsapp",
+          to: from,
+          ...responseObject,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          console.log("Message sent successfully:", response.data);
+          res.sendStatus(200);
+        })
+        .catch((error) => {
+          console.error(
+            "Error sending message:",
+            error.response ? error.response.data : error.message
+          );
+          res.sendStatus(500);
         });
-
-        console.log("Message sent successfully:", response.data);
-        res.sendStatus(200);
-      } catch (error) {
-        console.error(
-          "Error sending message:",
-          error.response ? error.response.data : error.message
-        );
-        res.sendStatus(500);
-      }
     } else {
       res.sendStatus(404);
     }
@@ -416,5 +382,5 @@ app.post("/webhook", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.status(200).send("Hello, this is webhook setup");
+  res.status(200).send("hello this is webhook setup");
 });
