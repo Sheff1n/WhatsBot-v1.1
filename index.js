@@ -197,7 +197,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               parameters: [
                 {
                   type: "text",
-                  text: "Sheffin",
+                  text: "Customer",
                 },
               ],
             },
@@ -214,50 +214,6 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
             },
           ],
         },
-      },
-    });
-
-    console.log("Template message sent successfully:", response.data);
-  } catch (error) {
-    console.error("Error sending template message:", error.response ? error.response.data : error.message);
-  }
-};
-
-const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
-  try {
-    const response = await axios({
-      method: "POST",
-      url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        "Content-Type": "application/json",
-      },
-      data: {
-        messaging_product: "whatsapp",
-        to: to,
-        action:{
-          type: "BUTTONS",
-          buttons: [
-            {
-              type: "PHONE_NUMBER",
-              parameters: [
-                {
-                  text: "Call",
-                  phone_number: "15550051310",
-                },
-              ],
-            },
-            {
-              type: "URL",
-              parameters: [
-                {
-                  text: "Visit Website",
-                  url: "https://sheffin.online",
-                },
-              ],
-            }
-          ]
-        }
       },
     });
 
@@ -326,11 +282,25 @@ app.post("/webhook", async (req, res) => {
               },
             });
 
+            // Send confirmation to client
+            await axios({
+              method: "POST",
+              url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+              data: {
+                messaging_product: "whatsapp",
+                to: from,
+                text: {
+                  body: "Thank you for confirming! Your details have been forwarded to our team. For more details call +919895260915",
+                },
+              },
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+
             // Send thank you template message to client
             await sendTemplateMessage(phon_no_id, from, token);
-
-            await sendTemplateMessage1(phon_no_id, from, token);
-
             res.sendStatus(200);
           } catch (error) {
             console.error("Error sending message:", error.response ? error.response.data : error.message);
