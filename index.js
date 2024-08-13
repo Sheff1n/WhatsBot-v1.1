@@ -208,7 +208,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               parameters: [
                 {
                   type: "text",
-                  text: "home",
+                  text: "/",
                 },
               ],
             },
