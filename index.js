@@ -270,7 +270,6 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
                   text: "https://sheffin.online/", // Website URL
                 },
               ],
-              title: "Visit Website", // Button text
             },
             {
               type: "button",
@@ -282,7 +281,6 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
                   text: "tel:+9895260915", // Phone call using tel: URL scheme
                 },
               ],
-              title: "Call Support", // Button text
             },
           ],
         },
@@ -294,6 +292,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
     console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
 };
+
 
 
 
