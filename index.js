@@ -140,27 +140,24 @@ const confirmationObject = (details) => ({
     body: {
       text: `Please confirm your details:\n\nService: ${details.service}\nLanguage: ${details.language}\nBudget: ${details.budget}\nAre these details correct?`,
     },
-          action: {
-        buttonText: "Choose an option",
-        buttons: [
-          {
-            buttonType: "urlButton",
-            buttonText: "Visit Item 1",
-            url: "https://www.example.com/item1"
+    action: {
+      buttons: [
+        {
+          type: "reply",
+          reply: {
+            id: "confirmation_yes",
+            title: "Yes",
           },
-          {
-            buttonType: "textButton",
-            buttonText: "Text for Item 2",
-            text: "item2"
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "confirmation_no",
+            title: "No",
           },
-          {
-            buttonType: "textButton",
-            buttonText: "Text for Item 3",
-            text: "item3"
-          }
-        ]
-      }
-
+        },
+      ],
+    },
   },
 });
 
@@ -236,74 +233,62 @@ const confirmationObject = (details) => ({
 // };
 const sendTemplateMessage = async (phone_number_id, to, access_token) => {
   try {
-    const response = await axios({
-      method: "POST",
-      url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        "Content-Type": "application/json",
-      },
-      data: {
-        messaging_product: "whatsapp",
-        recipient_type: "individual",
-        to: to,
-        type: "template",
-        template: {
-          name: "thank_you", // Your template name
-          language: {
-            code: "en_US",
-          },
-          components: [
+    const response = await axios.post(
+      `https://api.chat-api.com/${accessToken}/sendMessage`,
+      {
+        phone: phoneNumber,
+        body: 'Check out this list:',
+        list: {
+          listType: "SINGLE_SELECT", // Ensure the list type is specified
+          sections: [
             {
-              type: "header",
-              parameters: [
+              title: 'Section 1',
+              rows: [
                 {
-                  type: "image",
-                  image: {
-                    link: "https://example.com/path/to/your/image.jpg", // URL to the image
-                  },
+                  title: 'Item 1',
+                  description: 'Description 1',
+                  rowId: 'item1', // Unique identifier for the item
                 },
-              ],
-            },
-            {
-              type: "body",
-              parameters: [
                 {
-                  type: "text",
-                  text: "Sheffin", // This text will replace a placeholder in the body
+                  title: 'Item 2',
+                  description: 'Description 2',
+                  rowId: 'item2', // Unique identifier for the item
                 },
-              ],
-            },
-            {
-              type: "button",
-              sub_type: "url", // Correct sub_type for a URL button
-              index: "0",
-              parameters: [
                 {
-                  type: "text",
-                  text: "https://sheffin.online/", // URL to your website
-                },
-              ],
-            },
-            {
-              type: "button",
-              sub_type: "call", // Another URL button for phone calls
-              index: "1",
-              parameters: [
-                {
-                  type: "phone_number",
-                  phone_number: "+9895260915", // The phone number to be called
-                },
-              ],
-            },
-          ],
+                  title: 'Item 3',
+                  description: 'Description 3',
+                  rowId: 'item3', // Unique identifier for the item
+                }
+              ]
+            }
+          ]
         },
-      },
-    });
-
-    console.log("Template message sent successfully:", response.data);
+        action: {
+          buttonText: "Choose an option",
+          buttons: [
+            {
+              buttonType: "urlButton",
+              buttonText: "Visit Item 1",
+              url: "https://www.example.com/item1"
+            },
+            {
+              buttonType: "textButton",
+              buttonText: "Text for Item 2",
+              text: "item2"
+            },
+            {
+              buttonType: "textButton",
+              buttonText: "Text for Item 3",
+              text: "item3"
+            }
+          ]
+        }
+      }
+    );
+  
+    console.log("Message sent successfully:", response.data);
   } catch (error) {
-    console.error("Error sending template message:", error.response ? error.response.data : error.message);
+    console.error("Error sending message:", error.response ? error.response.data : error.message);
   }
 };
 
