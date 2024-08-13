@@ -140,24 +140,27 @@ const confirmationObject = (details) => ({
     body: {
       text: `Please confirm your details:\n\nService: ${details.service}\nLanguage: ${details.language}\nBudget: ${details.budget}\nAre these details correct?`,
     },
-    action: {
-      buttons: [
-        {
-          type: "reply",
-          reply: {
-            id: "confirmation_yes",
-            title: "Yes",
+          action: {
+        buttonText: "Choose an option",
+        buttons: [
+          {
+            buttonType: "urlButton",
+            buttonText: "Visit Item 1",
+            url: "https://www.example.com/item1"
           },
-        },
-        {
-          type: "reply",
-          reply: {
-            id: "confirmation_no",
-            title: "No",
+          {
+            buttonType: "textButton",
+            buttonText: "Text for Item 2",
+            text: "item2"
           },
-        },
-      ],
-    },
+          {
+            buttonType: "textButton",
+            buttonText: "Text for Item 3",
+            text: "item3"
+          }
+        ]
+      }
+
   },
 });
 
