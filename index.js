@@ -265,7 +265,7 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
             },
             {
               type: "button",
-              sub_type: "call",
+              // sub_type: "call",
               index:0,
             },
           ],
