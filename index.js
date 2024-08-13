@@ -324,7 +324,7 @@ app.post("/webhook", async (req, res) => {
                       {
                         type: "url",
                         // sub_type: "url",
-                        index: "0",
+                        // index: "0",
                         parameters: [
                           {
                             type: "text",
