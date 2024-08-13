@@ -256,31 +256,33 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
               parameters: [
                 {
                   type: "text",
-                  text: "Your message here.",
+                  text: "Would you like to call support or visit our website?",
                 },
               ],
             },
             {
               type: "button",
-              sub_type: "url", // URL Button
+              sub_type: "url", // Correct sub_type for buttons
               index: "0",
               parameters: [
                 {
                   type: "text",
-                  text: "https://sheffin.online/",
+                  text: "https://sheffin.online/", // Website URL
                 },
               ],
+              title: "Visit Website", // Button text
             },
             {
               type: "button",
-              sub_type: "phone_number", // Phone Call Button
+              sub_type: "url", // Use URL sub_type for phone calls too
               index: "1",
               parameters: [
                 {
                   type: "text",
-                  text: "9895260915",
+                  text: "tel:+9895260915", // Phone call using tel: URL scheme
                 },
               ],
+              title: "Call Support", // Button text
             },
           ],
         },
@@ -292,6 +294,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
     console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
 };
+
 
 
 
