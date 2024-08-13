@@ -264,8 +264,8 @@ const sendTemplateMessage1 = async (phone_number_id, to, access_token) => {
               ],
             },
             {
-              type: "button",
-              sub_type: "QUICK_REPLY",
+              type: "phone_number",
+              // sub_type: "QUICK_REPLY",
               index:0,
             },
           ],
