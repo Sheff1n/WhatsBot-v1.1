@@ -28,34 +28,28 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-const serviceSelectionObject = {
+// Step 1: Selection of room or partition
+const roomSelectionObject = {
   type: "interactive",
   interactive: {
     type: "button",
     body: {
-      text: "What can I help you with?",
+      text: "I am looking for a:",
     },
     action: {
       buttons: [
         {
           type: "reply",
           reply: {
-            id: "web_development",
-            title: "Web Development",
+            id: "room",
+            title: "Room",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "app_development",
-            title: "App Development",
-          },
-        },
-        {
-          type: "reply",
-          reply: {
-            id: "automation",
-            title: "Automation",
+            id: "partition",
+            title: "Partition",
           },
         },
       ],
@@ -63,34 +57,35 @@ const serviceSelectionObject = {
   },
 };
 
-const languageSelectionObject = {
+// Step 2: Description of occupants
+const occupantDescriptionObject = {
   type: "interactive",
   interactive: {
     type: "button",
     body: {
-      text: "Choose one of the following languages:",
+      text: "Please describe the occupants:",
     },
     action: {
       buttons: [
         {
           type: "reply",
           reply: {
-            id: "lang_javascript",
-            title: "JavaScript",
+            id: "single_male",
+            title: "Single Male",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "lang_python",
-            title: "Python",
+            id: "single_female",
+            title: "Single Female",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "lang_java",
-            title: "Java",
+            id: "couple",
+            title: "Couple",
           },
         },
       ],
@@ -98,34 +93,71 @@ const languageSelectionObject = {
   },
 };
 
+// Step 3: Selection of preferred location
+const locationSelectionObject = {
+  type: "interactive",
+  interactive: {
+    type: "button",
+    body: {
+      text: "What is your preferred location?",
+    },
+    action: {
+      buttons: [
+        {
+          type: "reply",
+          reply: {
+            id: "location_burjuman",
+            title: "Burjuman",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "location_deira_city_center",
+            title: "Deira City Center",
+          },
+        },
+        {
+          type: "reply",
+          reply: {
+            id: "location_fahidi",
+            title: "Fahidi",
+          },
+        },
+      ],
+    },
+  },
+};
+
+// Step 4: Selection of budget range
 const budgetSelectionObject = {
   type: "interactive",
   interactive: {
     type: "button",
     body: {
-      text: "Select your budget range:",
+      text: "How much is your budget?",
     },
     action: {
       buttons: [
         {
           type: "reply",
           reply: {
-            id: "budget_below_10000",
-            title: "Below 10000",
+            id: "budget_1000_2000",
+            title: "1000 - 2000",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "budget_10000_50000",
-            title: "10000-50000",
+            id: "budget_2000_4000",
+            title: "2000 - 4000",
           },
         },
         {
           type: "reply",
           reply: {
-            id: "budget_above_50000",
-            title: "Above 50000",
+            id: "budget_above_4000",
+            title: "4000 and above",
           },
         },
       ],
@@ -133,12 +165,13 @@ const budgetSelectionObject = {
   },
 };
 
+// Confirmation message with the selected options
 const confirmationObject = (details) => ({
   type: "interactive",
   interactive: {
     type: "button",
     body: {
-      text: `Please confirm your details:\n\nService: ${details.service}\nLanguage: ${details.language}\nBudget: ${details.budget}\nAre these details correct?`,
+      text: `Please confirm your details:\n\nLooking For: ${details.selection}\nOccupants: ${details.occupants}\nLocation: ${details.location}\nBudget: ${details.budget}\nAre these details correct?`,
     },
     action: {
       buttons: [
@@ -204,7 +237,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
             {
               type: "button",
               sub_type: "url",
-              index:0,
+              index: 0,
               parameters: [
                 {
                   type: "text",
@@ -222,7 +255,6 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
     console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
 };
-
 
 let userSelections = {};
 
@@ -250,20 +282,23 @@ app.post("/webhook", async (req, res) => {
       console.log("From: " + from);
       console.log("Selected ID: " + selected_id);
 
-      let responseObject = serviceSelectionObject;
+      let responseObject = roomSelectionObject; // Start with room selection
       if (selected_id) {
-        if (selected_id.startsWith("web_development") || selected_id.startsWith("app_development") || selected_id.startsWith("automation")) {
-          userSelections[from] = { service: selected_id.replace(/_/g, " ") };
-          responseObject = languageSelectionObject;
-        } else if (selected_id.startsWith("lang_")) {
-          userSelections[from].language = selected_id.replace("lang_", "").replace(/_/g, " ");
-          responseObject = budgetSelectionObject;
+        if (selected_id === "room" || selected_id === "partition") {
+          userSelections[from] = { selection: selected_id };
+          responseObject = occupantDescriptionObject; // Move to occupant description
+        } else if (selected_id.startsWith("single_") || selected_id === "couple") {
+          userSelections[from].occupants = selected_id.replace("_", " ");
+          responseObject = locationSelectionObject; // Move to location selection
+        } else if (selected_id.startsWith("location_")) {
+          userSelections[from].location = selected_id.replace("location_", "").replace(/_/g, " ");
+          responseObject = budgetSelectionObject; // Move to budget selection
         } else if (selected_id.startsWith("budget_")) {
           userSelections[from].budget = selected_id.replace("budget_", "").replace(/_/g, " ");
-          responseObject = confirmationObject(userSelections[from]);
+          responseObject = confirmationObject(userSelections[from]); // Show confirmation
         } else if (selected_id === "confirmation_yes") {
           let clientDetails = userSelections[from];
-          let messageToAdmin = `Client Number: ${from}\nService: ${clientDetails.service}\nLanguage: ${clientDetails.language}\nBudget: ${clientDetails.budget}`;
+          let messageToAdmin = `Client Number: ${from}\nLooking For: ${clientDetails.selection}\nOccupants: ${clientDetails.occupants}\nLocation: ${clientDetails.location}\nBudget: ${clientDetails.budget}`;
 
           try {
             // Send message to admin
@@ -298,7 +333,6 @@ app.post("/webhook", async (req, res) => {
               },
             });
 
-
             // Send thank you template message to client
             await sendTemplateMessage(phon_no_id, from, token);
             res.sendStatus(200);
@@ -310,7 +344,7 @@ app.post("/webhook", async (req, res) => {
         } else if (selected_id === "confirmation_no") {
           // Reset the selections and start over
           userSelections[from] = {};
-          responseObject = serviceSelectionObject;
+          responseObject = roomSelectionObject;
         }
       }
 
