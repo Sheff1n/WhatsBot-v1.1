@@ -2,10 +2,14 @@ const express = require("express");
 const body_parser = require("body-parser");
 const axios = require("axios");
 require("dotenv").config();
-const emailjs = require("emailjs-com");
-const emailServiceID = "service_b4t832g"; // Replace with your service ID
-const emailTemplateID = "template_w44o5oj"; // Replace with your template ID
-const emailUserID = "your_emailjs_user_id"; // Replace with your EmailJS user ID
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+  service: "gmail", // Or another service (e.g., Yahoo, Outlook)
+  auth: {
+    user: "mohammedsheffin8@gmail.com", // Replace with your email
+    pass: "Mohammedsheffin0#", // Replace with your email password or app-specific password
+  },
+});
 
 
 const app = express().use(body_parser.json());
@@ -340,21 +344,21 @@ app.post("/webhook", async (req, res) => {
 
             // Send thank you template message to client
             await sendTemplateMessage(phon_no_id, from, token);
-            const emailData = {
+
+            const mailOptions = {
+              from: "mohammedsheffin8@gmail.com", // Sender address
+              to: "mohammedsheffin8@gmail.com", // List of receivers
               subject: "New Client Details",
-              from_name: from, // You can customize this as needed
-              message: messageToAdmin,
-              from_mail: "whatsapp-bot@ozma.com", // A placeholder email, customize it
+              text: messageToAdmin, // Plain text body
             };
-            emailjs
-            .send(emailServiceID, emailTemplateID, emailData, emailUserID)
-            .then(function (response) {
-              console.log("Email sent successfully!", response);
-            })
-            .catch(function (error) {
-              console.error("Failed to send email:", error);
+            transporter.sendMail(mailOptions, (error, info) => {
+              if (error) {
+                console.error("Error sending email:", error);
+              } else {
+                console.log("Email sent successfully:", info.response);
+              }
             });
-              
+                
             res.sendStatus(200);
           } catch (error) {
             console.error("Error sending message:", error.response ? error.response.data : error.message);
