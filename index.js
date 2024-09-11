@@ -259,7 +259,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
       },
     });
 
-    console.log("Template message sent successfully:", response.data);
+    console.log("Template message sent to admin successfully:", response.data);
   } catch (error) {
     console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
