@@ -265,6 +265,37 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
   }
 };
 
+const sendAdminTemplateMessage = async (phon_no_id, clientDetails) => {
+  try {
+    await axios({
+      method: "POST",
+      url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+      data: {
+        messaging_product: "whatsapp",
+        to: adminPhoneNumber,
+        type: "template",
+        template: {
+          name: "user_details", // Your template name
+          language: { code: "en_US" },
+          components: [
+            {
+              type: "body",
+              parameters: [
+                { type: "text", text: `Number: ${clientDetails.number}` }, // Replace {{1}} with client number
+              ],
+            },
+          ],
+        },
+      },
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log("Admin template message sent successfully");
+  } catch (error) {
+    console.error("Error sending admin template message:", error.response ? error.response.data : error.message);
+  }
+};
+
+
 let userSelections = {};
 
 app.post("/webhook", async (req, res) => {
