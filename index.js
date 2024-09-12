@@ -289,7 +289,7 @@ const sendAdminTemplateMessage = async (phon_no_id, clientDetails) => {
       },
       headers: { "Content-Type": "application/json" },
     });
-    console.log("Admin template message sent successfully");
+    console.log(`Admin template message sent successfully ${clientDetails.number}`);
   } catch (error) {
     console.error("Error sending admin template message:", error.response ? error.response.data : error.message);
   }
