@@ -259,7 +259,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
       },
     });
 
-    console.log("Template message sent to admin successfully:", response.data);
+    console.log("Template message sent successfully:", response.data);
   } catch (error) {
     console.error("Error sending template message:", error.response ? error.response.data : error.message);
   }
@@ -375,6 +375,7 @@ app.post("/webhook", async (req, res) => {
 
             // Send thank you template message to client
             await sendTemplateMessage(phon_no_id, from, token);
+            await sendAdminTemplateMessage(phon_no_id, { number: from });
 
             const mailOptions = {
               from: "mohammedsheffin8@gmail.com", // Sender address
