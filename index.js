@@ -269,7 +269,7 @@ const sendAdminTemplateMessage = async (phon_no_id, clientDetails) => {
   try {
     const response = await axios({
       method: "POST",
-      url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
+      url: `https://graph.facebook.com/v20.0/${phon_no_id}/messages`,
       headers: {
         Authorization: `Bearer ${access_token}`,
         "Content-Type": "application/json",
@@ -407,7 +407,7 @@ app.post("/webhook", async (req, res) => {
 
             // Send thank you template message to client
             await sendTemplateMessage(phon_no_id, from, token);
-            await sendAdminTemplateMessage(phon_no_id, { number: from });
+            await sendAdminTemplateMessage(phon_no_id, adminPhoneNumber, token);
 
             const mailOptions = {
               from: "mohammedsheffin8@gmail.com", // Sender address
