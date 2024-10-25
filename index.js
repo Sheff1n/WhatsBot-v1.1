@@ -265,7 +265,7 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
   }
 };
 
-const sendAdminTemplateMessage = async (phon_no_id, clientDetails) => {
+const sendAdminTemplateMessage = async (phon_no_id, to, access_token) => {
   try {
     const response = await axios({
       method: "POST",
