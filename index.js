@@ -267,29 +267,61 @@ const sendTemplateMessage = async (phone_number_id, to, access_token) => {
 
 const sendAdminTemplateMessage = async (phon_no_id, clientDetails) => {
   try {
-    await axios({
+    const response = await axios({
       method: "POST",
-      url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+      url: `https://graph.facebook.com/v20.0/${phone_number_id}/messages`,
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
       data: {
         messaging_product: "whatsapp",
-        to: adminPhoneNumber,
+        recipient_type: "individual",
+        to: to,
         type: "template",
         template: {
-          name: "user_details", // Your template name
-          language: { code: "en_US" },
+          name: "data_to_",
+          language: {
+            code: "en_US",
+          },
           components: [
+            {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: {
+                    link: "https://images.shiksha.com/mediadata/images/articles/1513768929php7jR4DL.jpeg",
+                  },
+                },
+              ],
+            },
             {
               type: "body",
               parameters: [
-                { type: "text", text: `Number: ${clientDetails.number}` }, // Replace {{1}} with client number
+                {
+                  type: "text",
+                  text: messageToAdmin,
+                },
+              ],
+            },
+            {
+              type: "button",
+              sub_type: "url",
+              index: 0,
+              parameters: [
+                {
+                  type: "text",
+                  text: "/",
+                },
               ],
             },
           ],
         },
       },
-      headers: { "Content-Type": "application/json" },
     });
-    console.log(`Admin template message sent successfully ${clientDetails.number}`);
+
+    console.log("Template message sent successfully:", response.data);
   } catch (error) {
     console.error("Error sending admin template message:", error.response ? error.response.data : error.message);
   }
