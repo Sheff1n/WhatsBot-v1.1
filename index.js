@@ -406,7 +406,7 @@ app.post("/webhook", async (req, res) => {
             });
 
             // Send thank you template message to client
-            await sendTemplateMessage(phon_no_id, from, token);
+            // await sendTemplateMessage(phon_no_id, from, token);
             await sendAdminTemplateMessage(phon_no_id, adminPhoneNumber, token);
 
             const mailOptions = {
