@@ -374,20 +374,20 @@ app.post("/webhook", async (req, res) => {
 
           try {
             // Send message to admin
-            await axios({
-              method: "POST",
-              url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
-              data: {
-                messaging_product: "whatsapp",
-                to: adminPhoneNumber,
-                text: {
-                  body: messageToAdmin,
-                },
-              },
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
+            // await axios({
+            //   method: "POST",
+            //   url: `https://graph.facebook.com/v13.0/${phon_no_id}/messages?access_token=${token}`,
+            //   data: {
+            //     messaging_product: "whatsapp",
+            //     to: adminPhoneNumber,
+            //     text: {
+            //       body: messageToAdmin,
+            //     },
+            //   },
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //   },
+            // });
 
             // Send confirmation to client
             await axios({
@@ -406,8 +406,8 @@ app.post("/webhook", async (req, res) => {
             });
 
             // Send thank you template message to client
-            // await sendTemplateMessage(phon_no_id, from, token);
-            await sendAdminTemplateMessage(phon_no_id, adminPhoneNumber, token);
+            await sendTemplateMessage(phon_no_id, from, token);
+            // await sendAdminTemplateMessage(phon_no_id, adminPhoneNumber, token);
 
             const mailOptions = {
               from: "mohammedsheffin8@gmail.com", // Sender address
